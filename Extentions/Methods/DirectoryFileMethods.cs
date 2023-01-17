@@ -18,6 +18,15 @@ namespace SDN.Extensions
             Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(DirectoryLocation.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
         }
 
+        public static void CheckPath(string DirectoryPath, bool CreatePath = true)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(DirectoryPath)) && CreatePath.Equals(true))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(DirectoryPath));
+            }
+        }
+
+
     }
 
 
@@ -54,29 +63,14 @@ namespace SDN.Extensions
         public static void MoveTo(this FileInfo OldLocationFullName, string NewLocation, bool overwrite = false)
         {
 
-            NewLocation = string.Concat(NewLocation, OldLocationFullName.Name);
-
-            DirectoryInfo MoveToLocation = new DirectoryInfo(NewLocation);
-
-            if (MoveToLocation.Exists.Equals(false))
-            {
-                MoveToLocation.Create();
-            }
-
-
-            if (File.Exists(NewLocation) == true && overwrite == false)
-            {
-                string ThisIsNowNow = DateTime.Now.ToFileTimeUtc().ToString();
-
-                NewLocation = NewLocation.Replace(".", $"_{ThisIsNowNow}.");
-
-            }
-
-            File.Move(OldLocationFullName.ToString(), NewLocation);
-
+            MoveTo(OldLocationFullName.FullName,NewLocation,overwrite);
 
         }
 
+        /// <summary>
+        /// Used VB to move the file to the recycle bin.
+        /// </summary>
+        /// <param name="FileLocation"></param>
         public static void MoveToRecycleBin(this FileInfo FileLocation)
         {
             Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(FileLocation.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
